@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!--First load static assets-->
+  <head>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>www.boiler.com</title>
+    <meta property="og:image" content="https://cdn.jsdelivr.net/gh/Web3Engineer/Web3Engineer@main/mtnBanner.jpg" />
+    <meta property="og:title" content="Boiler SEO Title Here" />
+    <meta property="og:description" content="Description For Boiler Here" />
+    <meta property="og:url" content="www.boiler.com" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: rgb(22, 68, 22);
+      }
+    </style>
+  </head>
+  
+  <body>
+    <div>
+      non-data static HTML stuff here
+    </div>
+
+    <script>console.log("body");</script>
+    <script defer src="../Utilities/JS/SHA512.min.js">
+      /*Second load external assets*/
+      const noncer = 1;/*to test squarespace to see if even a forec-no-cache even works...*/
+      console.log(noncer);
+    </script>
+
+    <script defer>
+      /*Third load dynamic assets*/
+      window.onload = function () {
+        /*'syncd' means UTC uniform time, so no time zone conflictions*/
+        const getYMDsyncd = function () {
+          const now = new Date();
+          const year = now.getUTCFullYear();
+          const month = String(now.getUTCMonth() + 1).padStart(2, "0");
+          const day = String(now.getUTCDate()).padStart(2, "0");
+          return `${year}${month}${day}`;
+        };
+
+        const pullCDNdaily = function (_salt, _appName) {
+          const salt = _salt;
+          const appName = _appName;
+          const ymd = getYMDsyncd();
+          const hashedResult = sha512(`${salt}${appName}${ymd}`);
+          const hashedTrunc = hashedResult.slice(59, -59);
+          const dataScript = document.createElement("script");
+          dataScript.src = `https://cdn.jsdelivr.net/gh/srvrshard1/cdn@${hashedTrunc}/manifestData.js`;
+          dataScript.onload = function () {
+            /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+            /**/
+            /*https://cdn.jsdelivr.net/gh/srvrshard1/cdn@59a8257b6a/manifestData.js*/
+            /*INIT APP POINT*/ console.log(manifestData.commitData.dataKeyBin15); /*INIT APP POINT*/
+            /**/
+            /**/
+            /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+          };
+          document.head.append(dataScript);
+        };
+        pullCDNdaily("salt", "app");
+      };
+    </script>
+  </body>
+</html>
