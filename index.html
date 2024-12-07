@@ -1,68 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
-  <!--First load static assets-->
   <head>
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>www.boiler.com</title>
-    <meta property="og:image" content="https://cdn.jsdelivr.net/gh/Web3Engineer/Web3Engineer@main/mtnBanner.jpg" />
-    <meta property="og:title" content="Boiler SEO Title Here" />
-    <meta property="og:description" content="Description For Boiler Here" />
-    <meta property="og:url" content="www.boiler.com" />
+    <title>Express Server Interaction</title>
+    <script>
+      // Replace with your server's public URL
+      const serverUrl = "https://eodqi8nhky06ui.m.pipedream.net"; // Example: 'https://128.199.12.25:3000' or your custom domain
+
+      // Function to send a GET request
+      function sendGetRequest() {
+        fetch(`${serverUrl}/`)
+          .then((response) => response.text())
+          .then((data) => {
+            document.getElementById("getResponse").textContent = data;
+          })
+          .catch((error) => {
+            console.error("Error with GET request:", error);
+            document.getElementById("getResponse").textContent = "Error fetching data.";
+          });
+      }
+
+      // Function to handle POST request submission
+      function sendPostRequest(event) {
+        event.preventDefault(); // Prevent form submission default behavior
+
+        const formData = new FormData(event.target);
+        const jsonData = Object.fromEntries(formData.entries());
+
+        fetch(`${serverUrl}/submit`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(jsonData),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            document.getElementById("postResponse").textContent = JSON.stringify(data, null, 2);
+          })
+          .catch((error) => {
+            console.error("Error with POST request:", error);
+            document.getElementById("postResponse").textContent = "Error submitting data.";
+          });
+      }
+    </script>
     <style>
+      /* Optional: Add some basic styling for better appearance */
       body {
         font-family: Arial, sans-serif;
-        background-color: rgb(22, 68, 22);
+        margin: 20px;
+      }
+      section {
+        margin-bottom: 40px;
+      }
+      input {
+        padding: 8px;
+        margin-top: 4px;
+        margin-bottom: 12px;
+        width: 100%;
+        max-width: 300px;
+      }
+      button {
+        padding: 10px 20px;
+        cursor: pointer;
+      }
+      .response {
+        background-color: #f4f4f4;
+        padding: 10px;
+        border-radius: 4px;
+        max-width: 600px;
+        white-space: pre-wrap;
       }
     </style>
   </head>
-  
   <body>
-    <div>
-      non-data static HTML stuff here
-    </div>
+    <h1>Express Server Interaction</h1>
 
-    <script>console.log("body");</script>
-    <script defer src="../Utilities/JS/SHA512.min.js">
-      /*Second load external assets*/
-      const noncer = 1;/*to test squarespace to see if even a forec-no-cache even works...*/
-      console.log(noncer);
-    </script>
+    <!-- GET Request Section -->
+    <section>
+      <h2>Send a GET Request</h2>
+      <button onclick="sendGetRequest()">Send GET Request</button>
+      <p><strong>Response:</strong></p>
+      <div class="response" id="getResponse">No response yet.</div>
+    </section>
 
-    <script defer>
-      /*Third load dynamic assets*/
-      window.onload = function () {
-        /*'syncd' means UTC uniform time, so no time zone conflictions*/
-        const getYMDsyncd = function () {
-          const now = new Date();
-          const year = now.getUTCFullYear();
-          const month = String(now.getUTCMonth() + 1).padStart(2, "0");
-          const day = String(now.getUTCDate()).padStart(2, "0");
-          return `${year}${month}${day}`;
-        };
-
-        const pullCDNdaily = function (_salt, _appName) {
-          const salt = _salt;
-          const appName = _appName;
-          const ymd = getYMDsyncd();
-          const hashedResult = sha512(`${salt}${appName}${ymd}`);
-          const hashedTrunc = hashedResult.slice(59, -59);
-          const dataScript = document.createElement("script");
-          dataScript.src = `https://cdn.jsdelivr.net/gh/srvrshard1/cdn@${hashedTrunc}/manifestData.js`;
-          dataScript.onload = function () {
-            /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-            /**/
-            /*https://cdn.jsdelivr.net/gh/srvrshard1/cdn@59a8257b6a/manifestData.js*/
-            /*INIT APP POINT*/ console.log(manifestData.commitData.dataKeyBin15); /*INIT APP POINT*/
-            /**/
-            /**/
-            /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-          };
-          document.head.append(dataScript);
-        };
-        pullCDNdaily("salt", "app");
-      };
-    </script>
+    <!-- POST Request Section -->
+    <section>
+      <h2>Send a POST Request</h2>
+      <form id="postForm" onsubmit="sendPostRequest(event)">
+        <label>
+          Name:
+          <input type="text" name="name" required />
+        </label>
+        <br />
+        <label>
+          Email:
+          <input type="email" name="email" required />
+        </label>
+        <br />
+        <button type="submit">Send POST Request</button>
+      </form>
+      <p><strong>Response:</strong></p>
+      <div class="response" id="postResponse">No response yet.</div>
+    </section>
   </body>
 </html>
